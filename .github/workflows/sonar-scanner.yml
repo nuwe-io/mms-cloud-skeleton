@@ -3,7 +3,8 @@ on:
   push:
     branches:
       - main
-      - devel
+      - master
+      - dev
   pull_request:
     types:
       - opened
@@ -11,11 +12,16 @@ on:
       - synchronize
     branches:
       - main
-      - devel
+      - master
+      - dev
 
 jobs:
   secrets-gate:
-    runs-on: self-hosted
+    environment: SECRET-GATE
+    env:
+      SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+    runs-on: ubuntu-latest
     outputs:
       ok: ${{ steps.check-secrets.outputs.ok }}
     steps:
@@ -27,10 +33,14 @@ jobs:
           fi
 
   sonarqube:
+    environment: SCORING
+    env:
+      SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
     needs:
       - secrets-gate
     if: ${{ needs.secrets-gate.outputs.ok == 'true' }}
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
 
@@ -46,11 +56,8 @@ jobs:
         env:
           CI: true
 
-      - name: SonarQube Scan
+      - name: SonarQube scan 🚨
         uses: sonarsource/sonarqube-scan-action@master
         with:
           args: >
             -Dsonar.projectKey=${{ github.event.repository.name }}
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
