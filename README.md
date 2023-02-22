@@ -10,7 +10,6 @@
 
 </div>
 
-
 ## Vue/Vite Skeleton
 
 <br/>
@@ -20,13 +19,13 @@ quickly getting started developing a web application. Check the [Getting Started
 
 ## Technologies
 
-* [Typescript 4.7](https://www.typescriptlang.org/docs/handbook/release-notes/typescript-4-4.html)
-* [Vue 3](https://vuejs.org/)
-* [Vitest](https://vitest.dev/)
-* [ESLint](https://eslint.org/)
-* [Yarn](https://yarnpkg.com/)
-* [Docker](https://www.docker.com/)
-* [Make](https://www.gnu.org/software/make/manual/make.html)
+- [Typescript 4.7](https://www.typescriptlang.org/docs/handbook/release-notes/typescript-4-4.html)
+- [Vue 3](https://vuejs.org/)
+- [Vitest](https://vitest.dev/)
+- [ESLint](https://eslint.org/)
+- [Yarn](https://yarnpkg.com/)
+- [Docker](https://www.docker.com/)
+- [Make](https://www.gnu.org/software/make/manual/make.html)
 
 ## Getting Started
 
@@ -42,6 +41,15 @@ As you could see on the [Makefile](Makefile) script, you could just avoid those 
 Once these steps are finished, you could access to the application navigating
 into [http://localhost:3000](http://localhost:3000).
 
+## Using Dockerfile
+
+In case you don't want to install make but still run with docker follow the below instructions:
+
+1. Docker build -t <app-name>
+2. Docker run -it -p 3000:3000 <app-name>
+
+This version is meant to be run on prod environments and listens to all IP adressess. You can change this inside the package.json. You can change as well the exposed port inside the **Dockerfile** and **package.json**
+
 ## Overview
 
 This skeleton is based on
@@ -49,7 +57,7 @@ a [Clean Architecture](https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clea
 could find the first basic elements:
 
 > You could [find here an amazing Dev.to article](https://dev.to/bespoyasov/clean-architecture-on-frontend-4311)
-> explaining this Clean Architecture on frontend! (credits to [@bespoyasov_](https://twitter.com/bespoyasov_)).
+> explaining this Clean Architecture on frontend! (credits to [@bespoyasov\_](https://twitter.com/bespoyasov_)).
 
 ### UI layer
 
@@ -76,4 +84,3 @@ If you are having problems or need anything else, please let us know by
 ## License
 
 This project is licensed with the [MIT license](LICENSE).
-
