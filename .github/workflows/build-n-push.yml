@@ -1,0 +1,63 @@
+name: Build & Push
+
+on:
+  push:
+    branches:
+      - "main"
+      - "stag"
+      - "dev"
+
+env:
+  GCP_PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
+  CONTAINER_REGISTRY_URL: ${{ vars.CONTAINER_REGISTRY_URL }}
+  GCP_AR_REPO_NAME: ${{ vars.GCP_AR_REPO_NAME }}
+  TAG: ${{ github.ref == 'refs/heads/main' && 'latest' || github.ref == 'refs/heads/stag' && 'stag' || github.ref == 'refs/heads/dev' && 'dev' || github.sha }}
+  COMMIT_HASH: ${{ github.sha }}
+
+jobs:
+  build-n-push:
+    name: Build with Cloud Build and push to Artifact Registry
+    runs-on: ubuntu-latest
+
+    steps:
+      - id: "src-clone"
+        name: Checkout code
+        uses: actions/checkout@v3
+
+      # For this use case, we'll use Service Account authentication;
+      # however, it's strongly suggested that you use Workload identity federation instead.
+      # Further details on how to setup Workload identity federation:
+      # [1] https://cloud.google.com/iam/docs/workload-identity-federation.
+      # [2] https://github.com/google-github-actions/auth#usage
+      - id: "gcloud-auth"
+        name: Authenticate to Google Cloud.
+        uses: google-github-actions/auth@v1
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
+
+      - id: "gcloud-cli-setup"
+        name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v1
+
+      # We will only authenticate in one artifact registry location for the sake of the PoC.
+      # Nevertheless, with a little more thinking, we could build up numerous regions and/or registries within of a single region.
+      - id: "gcloud-docker-creds-helper"
+        name: Set up Cloud SDK as Docker's credential helper.
+        env:
+          CONTAINER_REGISTRY_URL: ${{ env.CONTAINER_REGISTRY_URL }}
+        run: |
+          gcloud auth configure-docker $CONTAINER_REGISTRY_URL
+
+      - id: "build-n-push"
+        name: Build and Push Docker image.
+        env:
+          CONTAINER_REGISTRY_URL: ${{ env.CONTAINER_REGISTRY_URL }}
+          GCP_PROJECT_ID: ${{ env.GCP_PROJECT_ID }}
+          GCP_AR_REPO_NAME: ${{ env.GCP_AR_REPO_NAME }}
+          TAG: ${{ env.TAG }}
+          COMMIT_HASH: ${{ env.COMMIT_HASH }}
+        run: |
+          export DOCKER_IMAGE_NAME=$(basename `git rev-parse --show-toplevel`)
+          docker build -t $CONTAINER_REGISTRY_URL/$GCP_PROJECT_ID/$GCP_AR_REPO_NAME/$DOCKER_IMAGE_NAME:$TAG -t $CONTAINER_REGISTRY_URL/$GCP_PROJECT_ID/$GCP_AR_REPO_NAME/$DOCKER_IMAGE_NAME:$COMMIT_HASH .
+          docker push $CONTAINER_REGISTRY_URL/$GCP_PROJECT_ID/$GCP_AR_REPO_NAME/$DOCKER_IMAGE_NAME:$TAG
+          docker push $CONTAINER_REGISTRY_URL/$GCP_PROJECT_ID/$GCP_AR_REPO_NAME/$DOCKER_IMAGE_NAME:$COMMIT_HASH
