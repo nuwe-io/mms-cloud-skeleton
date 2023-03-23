@@ -76,6 +76,19 @@ This is the layer which would use any external service and communicate with the 
 As we said, this is the layer that communicates the application with the outer world, and the one that would be coupled
 with almost any 3rd party provider, framework, etc...
 
+## CI/CD Setup & Usage
+
+### Prerequirements
+
+1. Set the environment variables listed below in your GitHub repository. There are several ways to do this based on your use case and needs. Follow the links [1] and [2] for more information on how to complete this step.
+   | Name                            | Type     | Description                                                               |
+   | ------------------------------- | -------- | ------------------------------------------------------------------------- |
+   | GCP_SA_KEY                      | Secret   | Service Account Key in JSON format.                                       |
+   | GCP_PROJECT_ID                  | Secret   | GCP Project ID                                                            |
+   | GCP_ARTIFACT_REGISTRY_HOSTNAME  | Secret   | URL to the container/artifact registry. E.g. `$GCP-REGION-docker.pkg.dev` |
+   | GCP_ARTIFACT_REGISTRY_REPO_NAME | Variable | Name of the container/artifact registry repository.                       |
+   | GCP_REGION                      | Variable | Region to deploy the resources                                            |
+
 ## Support
 
 If you are having problems or need anything else, please let us know by
