@@ -31,26 +31,29 @@ Ya tenía instalada la mayoría de estas excepto gcloud CLI. Para instalarla he 
 2. Me he asegurado de que el Dockerfile construido funciona desplegando en local con los siguiente comandos:
    docker build -t foo .
    docker run -it -p 3000:3000 foo
-   ![proyecto en local](./img/img1.png)
+   ![Despliegue local Dockerfile](./img/img01.png)
 
    
 3. Luego, he creado un archivo de configuración de Cloud Build ([cloudbuild.yaml](./cloudbuild.yaml)) que especifica las acciones que deben realizarse para compilar y registrar el contenedor en el Registry.
 4. He ejecutado el comando `gcloud builds submit --config cloudbuild.yaml` para enviar la compilación a Cloud Build.
 
-Aquí tuve una incidencia ya que google no me permitía habilitar el servicio de Cloud Build. He tenido que contactar con el soporte de Google para que me lo habilitaran.
+Aquí tuve una incidencia ya que google no me permitía habilitar el servicio de Cloud Build. Parecía un problema con la facturación de la cuenta. 
 
-![problema técnico gcs](./img/img2.png)
+![problema técnico gcs](./img/img02.png)
 
-5. Una vez completada la compilación y el registro, podía acceder al contenedor registrado en la consola de google:
+Con este problema he perdido alrededor de 1 hora y no he tenido resultados positivos. Así que no he podido continuar con este punto.
+
+![error en terminal](./img/img03.png)
+
+Lo único que quedaba es comprobar la compilación y el registro en la consola de google.
 
 
 
 ## Generar un fichero YAML para Docker Compose
-1. El archivo YAML de Docker Compose es un archivo de configuración que describe cómo se deben ejecutar varios contenedores de Docker juntos.
-2. Debes crear un archivo docker-compose.yaml y definir los servicios que necesitas.
-3. Una vez que hayas definido los servicios, puedes ejecutar el comando docker-compose up para iniciarlos.
+1. He creado el fichero [docker-compose.yaml](./docker-compose.yaml).
+2. He comprobado su despliegue en local.
 
-
+![Despliegue local docker compose](./img/img04.png)
 
 ## Generar los ficheros Terraform para tener la infraestructura como código y poder desplegar con Kubernetes
 1. Terraform es una herramienta para la gestión de infraestructura como código que te permite definir, crear y actualizar la infraestructura de tu aplicación en forma programática.
