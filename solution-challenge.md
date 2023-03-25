@@ -6,6 +6,7 @@ Indice:
   - [Registrar el Contenedor generado por el DockerFile con Cloud Build / Artifacts](#registrar-el-contenedor-generado-por-el-dockerfile-con-cloud-build--artifacts)
   - [Generar un fichero YAML para Docker Compose](#generar-un-fichero-yaml-para-docker-compose)
   - [Generar los ficheros Terraform para tener la infraestructura como código y poder desplegar con Kubernetes](#generar-los-ficheros-terraform-para-tener-la-infraestructura-como-código-y-poder-desplegar-con-kubernetes)
+  - [Extra: Desplegar con Terraform los recursos Kubernetes definidos en un fichero yaml](#extra-desplegar-con-terraform-los-recursos-kubernetes-definidos-en-un-fichero-yaml)
 
 
 
@@ -68,3 +69,17 @@ Lo único que quedaba es comprobar la compilación y el registro en la consola d
 
 [![terraform plan](https://asciinema.org/a/2kTYPpujUkdKngNfNxoAPeoTX.svg)](https://asciinema.org/a/2kTYPpujUkdKngNfNxoAPeoTX)
 
+Lo suyo hubiese sido poder aplicar con el comando `terraform apply` pero no he podido por el problema con Cloud Build.
+
+## Extra: Desplegar con Terraform los recursos Kubernetes definidos en un fichero yaml
+
+Para aplicar desde Terraform los recursos Kubernetes definidos un fichero yaml, por ejemplo `deployment.yaml`, es necesario utilizar el recurso `null_resource` en Terraform y ejecutar el comando `kubectl apply`. Ejemplo:
+
+```terraform
+resource "null_resource" "apply_deployments" {
+  provisioner "local-exec" {
+    command = "kubectl apply -f ${path.module}/deployments.yaml"
+  }
+}
+
+```
