@@ -1,0 +1,9 @@
+steps:
+- name: 'gcr.io/cloud-builders/docker'
+  args: ['build', '-t', 'gcr.io/mediamarkt_hackathon/services/vite-app', '.']
+  id: 'Build container image'
+- name: 'gcr.io/cloud-builders/docker'
+  args: ['push', 'gcr.io/mediamarkt_hackathon/services/vite-app']
+  id: 'Push container image to Artifact Registry'
+images:
+- 'gcr.io//mediamarkt_hackathon/services/vite-app'
