@@ -56,6 +56,15 @@ Lo único que quedaba es comprobar la compilación y el registro en la consola d
 ![Despliegue local docker compose](./img/img04.png)
 
 ## Generar los ficheros Terraform para tener la infraestructura como código y poder desplegar con Kubernetes
-1. Terraform es una herramienta para la gestión de infraestructura como código que te permite definir, crear y actualizar la infraestructura de tu aplicación en forma programática.
-2. Debes crear un archivo main.tf en el que especifiques las propiedades y configuraciones que deseas para tus recursos de Kubernetes.
-3. Luego, ejecuta el comando terraform init para inicializar tu configuración de Terraform y terraform apply para aplicar los cambios en tu cluster de Kubernetes.
+1. He creado los siguientes ficheros Terraform:
+
+├── [deploy.tf](./terraform-gke/deploy.tf)
+├── [main.tf](./terraform-gke/main.tf)
+├── [service.tf](./terraform-gke/service.tf)
+└── [variables.tf](./terraform-gke/variables.tf)
+
+2. Una vez creados los ficheros, he ejecutado el comando `terraform init` para inicializar el directorio de trabajo.
+3. Para comprobar el aprovisionamiento de la infraestructura, he ejecutado el comando `terraform plan` y he obtenido el siguiente resultado:
+
+[![terraform plan](https://asciinema.org/a/2kTYPpujUkdKngNfNxoAPeoTX.svg)](https://asciinema.org/a/2kTYPpujUkdKngNfNxoAPeoTX)
+
