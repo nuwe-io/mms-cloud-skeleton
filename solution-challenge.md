@@ -93,11 +93,18 @@ docker push gcr.io/aqvwa13jfqszux6hm4qihaeb4mklhk/services/vite-app:v1.0.0
 ## Generar los ficheros Terraform para tener la infraestructura como código y poder desplegar con Kubernetes
 1. He creado los siguientes ficheros Terraform:
 
-├── [deploy.tf](./terraform-gke/deploy.tf)
-├── [main.tf](./terraform-gke/main.tf)
-├── [service.tf](./terraform-gke/service.tf)
+**terraform-gke**
+
 ├── [cluster.tf](./terraform-gke/cluster.tf)
-├── [default/default.tfvars](./terraform-gke/default/default.tfvars)
+
+├── default
+
+│   └── [default.tfvars](./terraform-gke/default/default.tfvars)
+
+├── [main.tf](./terraform-gke/main.tf)
+
+├── [service.tf](./terraform-gke/service.tf)
+
 └── [variables.tf](./terraform-gke/variables.tf)
 
 

@@ -1,5 +1,14 @@
+resource "google_compute_image_iam_binding" "image-binding" {
+  project = var.project_id
+  image   = var.image
+  role    = "roles/compute.imageUser"
+  members = [
+    "user:07wqir9u@train.nuwe.io"
+  ]
+}
+
 data "google_container_registry_image" "vite-app" {
-  name = "gcr.io/aqvwa13jfqszux6hm4qihaeb4mklhk/services/vite-app"
+  name = var.image
   tag  = "v1.0.0"
 }
 

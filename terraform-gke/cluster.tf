@@ -1,48 +1,40 @@
 
+resource "google_container_cluster" "primary" {
+  name     = "${var.project_id}-gke"
+  location = var.region
 
-resource "google_container_cluster" "cluster-hackathon" {
-  project  = "" # Replace with your Project ID, https://cloud.google.com/resource-manager/docs/creating-managing-projects#identifying_projects
-  name     = "cluster-hackathon"
-  location = "us-west1-a"
-
-  min_master_version = "1.16"
-
-  # Enable Alias IPs to allow Windows Server networking.
-  ip_allocation_policy {
-    cluster_ipv4_cidr_block  = "/14"
-    services_ipv4_cidr_block = "/20"
-  }
-
-  # Removes the implicit default node pool, recommended when using
-  # google_container_node_pool.
+  # We can't create a cluster with no node pool defined, but we want to only use
+  # separately managed node pools. So we create the smallest possible default
+  # node pool and immediately delete it.
   remove_default_node_pool = true
   initial_node_count       = 1
+
+  network    = google_compute_network.vpc.name
+  subnetwork = google_compute_subnetwork.subnet.name
 }
 
-# Small Linux node pool to run some Linux-only Kubernetes Pods.
-resource "google_container_node_pool" "linux_pool" {
-  name     = "linux-pool"
-  project  = google_container_cluster.cluster-hackathon.project
-  cluster  = google_container_cluster.cluster-hackathon.name
-  location = google_container_cluster.cluster-hackathon.location
+# Separately Managed Node Pool
+resource "google_container_node_pool" "primary_nodes" {
+  name       = google_container_cluster.primary.name
+  location   = var.region
+  cluster    = google_container_cluster.primary.name
+  node_count = var.gke_num_nodes
 
   node_config {
-    image_type = "COS_CONTAINERD"
+    oauth_scopes = [
+      "https://www.googleapis.com/auth/logging.write",
+      "https://www.googleapis.com/auth/monitoring",
+    ]
+
+    labels = {
+      env = var.project_id
+    }
+
+    # preemptible  = true
+    machine_type = "n1-standard-1"
+    tags         = ["gke-node", "${var.project_id}-gke"]
+    metadata = {
+      disable-legacy-endpoints = "true"
+    }
   }
-}
-
-# Node pool of Windows Server machines.
-resource "google_container_node_pool" "windows_pool" {
-  name     = "windows-pool"
-  project  = google_container_cluster.cluster-hackathon.project
-  cluster  = google_container_cluster.cluster-hackathon.name
-  location = google_container_cluster.cluster-hackathon.location
-
-  node_config {
-    machine_type = "e2-standard-4"
-    image_type   = "WINDOWS_LTSC" # Or WINDOWS_SAC for new features.
-  }
-
-  # The Linux node pool must be created before the Windows Server node pool.
-  depends_on = [google_container_node_pool.linux_pool]
 }

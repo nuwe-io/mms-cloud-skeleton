@@ -10,7 +10,7 @@ resource "kubernetes_service" "vite-app" {
 
     port {
       name        = "http"
-      port        = 80
+      port        = 3000
       target_port = "http"
     }
 

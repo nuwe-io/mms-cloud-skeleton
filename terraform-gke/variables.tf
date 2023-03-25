@@ -8,39 +8,31 @@ variable "region" {
   default     = "us-central1"
 }
 
-variable "cluster_name" {
-  description = "Nombre del clúster de Kubernetes que se creará"
-  default     = "cluster-hackathon"
-}
-
-
 variable "zone" {
   description = "The zone to deploy resources into."
   type        = string
   default     = "us-central1-a"
 }
 
-variable "network" {
-  description = "The network to deploy resources into."
+variable "image" {
+  description = "The image to deploy."
   type        = string
-  default     = "default"
+  default     = "gcr.io/aqvwa13jfqszux6hm4qihaeb4mklhk/services/vite-app"
 }
 
-variable "subnetwork" {
-  description = "The subnetwork to deploy resources into."
-  type        = string
-  default     = "default"
+
+variable "gke_username" {
+  default     = ""
+  description = "gke username"
 }
 
-variable "ip_range_pods" {
-  description = "The IP range to use for pods."
-  type        = string
-  default     = "pods"
+variable "gke_password" {
+  default     = ""
+  description = "gke password"
+  sensitive   = true
 }
 
-variable "ip_range_services" {
-  description = "The IP range to use for services."
-  type        = string
-  default     = "services"
+variable "gke_num_nodes" {
+  default     = 2
+  description = "number of gke nodes"
 }
-
