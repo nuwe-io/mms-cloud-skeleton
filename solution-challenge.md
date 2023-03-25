@@ -7,6 +7,8 @@ Indice:
   - [Generar un fichero YAML para Docker Compose](#generar-un-fichero-yaml-para-docker-compose)
   - [Generar los ficheros Terraform para tener la infraestructura como código y poder desplegar con Kubernetes](#generar-los-ficheros-terraform-para-tener-la-infraestructura-como-código-y-poder-desplegar-con-kubernetes)
   - [Extra: Desplegar con Terraform los recursos Kubernetes definidos en un fichero yaml](#extra-desplegar-con-terraform-los-recursos-kubernetes-definidos-en-un-fichero-yaml)
+  - [Pregunta sobre IAM](#pregunta-sobre-iam)
+    - [Respuesta:](#respuesta)
 
 
 
@@ -83,3 +85,15 @@ resource "null_resource" "apply_deployments" {
 }
 
 ```
+
+## Pregunta sobre IAM
+
+*"MediaMarkt quiere almacenar información sensible en Google Cloud Platform (GCP) y utiliza el principio de mínimo privilegio en la asignación de roles. Supongamos que eres el encargado de asignar roles en GCP, admin de la organización. Tu tarea es decidir qué rol sería el adecuado para cada grupo de personas: el equipo de DevOps para la creación de clusters en Kubernetes y el equipo de Finanzas en la gestión de la facturación en GCP. Detalla qué roles deben aplicar y los pasos que aplicaron en la Consola IAM GCP."*
+
+### Respuesta:
+
+En este caso, se puede asignar el siguiente rol a cada equipo:
+
+- **Equipo de DevOps**: para la creación de clusters en Kubernetes, se puede asignar el rol Kubernetes Engine Developer o Kubernetes Engine Admin. Estos roles permiten la creación y gestión de clústeres de Kubernetes, pero no proporcionan acceso a otros servicios de GCP.
+
+- **Equipo de Finanzas**: para la gestión de la facturación en GCP, se puede asignar el rol Billing Account Administrator o Billing Account Viewer. Estos roles permiten la gestión de la facturación y el uso de los recursos de GCP asociados a la cuenta de facturación, pero no proporcionan acceso a otros servicios de GCP.
