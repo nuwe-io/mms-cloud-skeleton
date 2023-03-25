@@ -1,28 +1,34 @@
-resource "kubernetes_deployment" "app" {
+data "google_container_registry_image" "vite-app" {
+  name = "gcr.io/aqvwa13jfqszux6hm4qihaeb4mklhk/services/vite-app"
+  tag  = "v1.0.0"
+}
+
+resource "kubernetes_deployment" "vite-app" {
   metadata {
-    name = "app-deployment"
+    name = "vite-app"
   }
 
   spec {
-    replicas = 1
-
     selector {
       match_labels = {
-        app = "app"
+        app = "vite-app"
       }
     }
+
+    replicas = 2
 
     template {
       metadata {
         labels = {
-          app = "app"
+          app = "vite-app"
         }
       }
 
       spec {
         container {
-          image = "your-docker-image:tag" # Reemplaza your-docker-image:tag con la ruta de tu imagen de Docker
-          name  = "app-container"
+          name  = "vite-app"
+          image = data.google_container_registry_image.vite-app.name
+
           port {
             container_port = 3000
             name           = "http"

@@ -1,15 +1,14 @@
-provider "google" {
-  project = "hale-woodland-381708"
-  region  = "us-central1"
+terraform {
+  required_providers {
+    google = {
+      source  = "hashicorp/google"
+      version = "4.58.0"
+    }
+  }
 }
 
-resource "google_container_cluster" "cluster" {
-  name               = "cluster-hackathon"
-  location           = "us-central1-c"
-  initial_node_count = 1
-
-  node_config {
-    machine_type = "n1-standard-1"
-  }
-
+provider "google" {
+  project = var.project_id
+  region  = var.region
+  zone    = var.zone
 }

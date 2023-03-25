@@ -4,6 +4,7 @@ Indice:
 - [MediaMarkt Hackathon - Challenge Solution](#mediamarkt-hackathon---challenge-solution)
   - [Requisitos](#requisitos)
   - [Registrar el Contenedor generado por el DockerFile con Cloud Build / Artifacts](#registrar-el-contenedor-generado-por-el-dockerfile-con-cloud-build--artifacts)
+    - [Post-data](#post-data)
   - [Generar un fichero YAML para Docker Compose](#generar-un-fichero-yaml-para-docker-compose)
   - [Generar los ficheros Terraform para tener la infraestructura como código y poder desplegar con Kubernetes](#generar-los-ficheros-terraform-para-tener-la-infraestructura-como-código-y-poder-desplegar-con-kubernetes)
   - [Extra: Desplegar con Terraform los recursos Kubernetes definidos en un fichero yaml](#extra-desplegar-con-terraform-los-recursos-kubernetes-definidos-en-un-fichero-yaml)
@@ -50,6 +51,37 @@ Con este problema he perdido alrededor de 1 hora y no he tenido resultados posit
 
 Lo único que quedaba es comprobar la compilación y el registro en la consola de google.
 
+### Post-data
+
+El motivo del problema era porque no tenía el proyecto adecuado en google cloud. Tenía un nuevo proyecto y no el proyecto que había sido designado para mí. Una vez que he cambiado el proyecto, he podido habilitar el servicio de Cloud Build.
+
+También estaba intentado subir el proyecto con un mecanismo antiguo, ahora ya no se usa Cloud Build y pronto quedará deprecado. Ahora se utiliza Artifact Registry.
+
+Para pushear la imagen la construí en local con un nombre adecuado:
+```bash
+docker build . -t services/vite-app:v1.0.0
+```
+Tagueé la imagen:
+```bash
+docker tag b1faa276127a gcr.io/aqvwa13jfqszux6hm4qihaeb4mklhk/services/vite-app:v1.0.0
+```
+
+Me autentiqué en el proyecto:
+```bash
+gcloud auth login
+gcloud config set project NAME_PROJECT
+```
+
+Cree el repositorio en el registry de google cloud:
+```bash
+gcloud artifacts repositories create services --repository-format=docker --location=us-central1 --description="Docker repository for services" --project=mediamarkt_hackathon
+```
+
+Después hice el push al registry de google cloud:
+
+```bash
+docker push gcr.io/aqvwa13jfqszux6hm4qihaeb4mklhk/services/vite-app:v1.0.0
+```
 
 
 ## Generar un fichero YAML para Docker Compose
@@ -64,14 +96,15 @@ Lo único que quedaba es comprobar la compilación y el registro en la consola d
 ├── [deploy.tf](./terraform-gke/deploy.tf)
 ├── [main.tf](./terraform-gke/main.tf)
 ├── [service.tf](./terraform-gke/service.tf)
+├── [cluster.tf](./terraform-gke/cluster.tf)
+├── [default/default.tfvars](./terraform-gke/default/default.tfvars)
 └── [variables.tf](./terraform-gke/variables.tf)
 
-2. Una vez creados los ficheros, he ejecutado el comando `terraform init` para inicializar el directorio de trabajo.
-3. Para comprobar el aprovisionamiento de la infraestructura, he ejecutado el comando `terraform plan` y he obtenido el siguiente resultado:
 
-[![terraform plan](https://asciinema.org/a/2kTYPpujUkdKngNfNxoAPeoTX.svg)](https://asciinema.org/a/2kTYPpujUkdKngNfNxoAPeoTX)
+1. Una vez creados los ficheros, he ejecutado el comando `terraform init` para inicializar el directorio de trabajo.
+2. Para comprobar el aprovisionamiento de la infraestructura, he ejecutado el comando `terraform plan` para realizar las comprobaciones necesarias.
+3. Una vez comprobado el aprovisionamiento, he ejecutado el comando `terraform apply` para aplicar los cambios.
 
-Lo suyo hubiese sido poder aplicar con el comando `terraform apply` pero no he podido por el problema con Cloud Build.
 
 ## Extra: Desplegar con Terraform los recursos Kubernetes definidos en un fichero yaml
 

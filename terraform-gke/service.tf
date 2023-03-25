@@ -1,11 +1,11 @@
-resource "kubernetes_service" "app" {
+resource "kubernetes_service" "vite-app" {
   metadata {
-    name = "app-service"
+    name = "vite-app"
   }
 
   spec {
     selector = {
-      app = "app"
+      app = "vite-app"
     }
 
     port {
