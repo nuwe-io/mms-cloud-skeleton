@@ -60,13 +60,16 @@ jobs:
         uses: hashicorp/setup-terraform@v1
 
       - name: Initialize Terraform
+        env:
+          GCP_SA_KEY: ${{ secrets.GCP_SA_KEY }}
         run: |
           cd ./automation/terraform
-          echo "${{ secrets.GCP_SA_KEY }}" > gcp-credentials.json
-          terraform init
+          echo "$GCP_SA_KEY" > gcp_sa_key.json
+          terraform init -backend-config="credentials=gcp_sa_key.json"
 
       - name: Validate Terraform
         run: |
+          cd ./automation/terraform
           terraform validate
 
       - name: Plan Terraform changes
@@ -74,9 +77,10 @@ jobs:
           TF_VAR_gcp_project_id: ${{ secrets.GCP_PROJECT_ID }}
           TF_VAR_gcp_region: ${{ vars.GCP_REGION }}
           TF_VAR_gcp_credentials: ${{ secrets.GCP_SA_KEY }}
-          TF_VAR_cluster_name: ${{ env.GKE_CLUSTER_NAME }}
+          TF_VAR_gke_cluster_name: ${{ env.GKE_CLUSTER_NAME }}
           TF_LOG: DEBUG
         run: |
+          cd ./automation/terraform
           terraform plan -out=tfplan
 
       - name: Apply Terraform changes
@@ -84,6 +88,7 @@ jobs:
           GCP_SA_KEY: ${{ secrets.GCP_SA_KEY }}
         if: github.ref == 'refs/heads/main'
         run: |
+          cd ./automation/terraform
           terraform apply -auto-approve -input=false tfplan
 
       - name: Authenticate and configure kubectl
