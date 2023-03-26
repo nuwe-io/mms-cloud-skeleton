@@ -78,7 +78,6 @@ jobs:
           TF_VAR_gcp_region: ${{ vars.GCP_REGION }}
           TF_VAR_gcp_credentials: ${{ secrets.GCP_SA_KEY }}
           TF_VAR_gke_cluster_name: ${{ env.GKE_CLUSTER_NAME }}
-          TF_LOG: DEBUG
         run: |
           cd ./automation/terraform
           terraform plan -out=tfplan
