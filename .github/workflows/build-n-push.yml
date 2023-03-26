@@ -82,7 +82,7 @@ jobs:
           cd ./automation/terraform
           terraform plan -out=tfplan
 
-      - name: Apply Terraform changes
+      - name: Apply Terraform changes (Only prod)
         env:
           GCP_SA_KEY: ${{ secrets.GCP_SA_KEY }}
         if: github.ref == 'refs/heads/main'
@@ -90,34 +90,39 @@ jobs:
           cd ./automation/terraform
           terraform apply -auto-approve -input=false tfplan
 
-      - name: Authenticate and configure kubectl
+      - name: Authenticate and configure kubectl (Only prod)
         env:
           GCP_PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
           GCP_REGION: ${{ vars.GCP_REGION }}
           GKE_CLUSTER_NAME: ${{ env.GKE_CLUSTER_NAME }}
+        if: github.ref == 'refs/heads/main'
         run: |
           gcloud container clusters get-credentials $GKE_CLUSTER_NAME --region $GCP_REGION --project $GCP_PROJECT_ID
           kubectl config use-context gke_$GCP_PROJECT_ID_$GCP_REGION_$GKE_CLUSTER_NAME
 
-      - name: Set up Docker Compose variables
+      - name: Set up Docker Compose variables (Only prod)
         env:
           IMAGE_NAME: ${{ secrets.GCP_ARTIFACT_REGISTRY_HOSTNAME }}/${{ secrets.GCP_PROJECT_ID }}/${{ github.event.repository.name }}:${{ github.sha }}
+        if: github.ref == 'refs/heads/main'
         run: |
           cd ./automation/docker
           envsubst < ./templates/docker-compose.yaml.tpl > ./docker-compose.yaml
 
-      - name: Install Kompose
+      - name: Install Kompose (Only prod)
+        if: github.ref == 'refs/heads/main'
         run: |
           curl -L https://github.com/kubernetes/kompose/releases/download/v1.24.0/kompose-linux-amd64 -o kompose
           chmod +x kompose
           sudo mv ./kompose /usr/local/bin/kompose
 
-      - name: Convert Docker Compose to Kubernetes manifests
+      - name: Convert Docker Compose to Kubernetes manifests (Only prod)
+        if: github.ref == 'refs/heads/main'
         run: |
           cd ./automation/docker
           kompose convert -f ./docker-compose.yaml -o ./k8s-manifest.yml
 
-      - name: Deploy Kubernetes service
+      - name: Deploy Kubernetes service (Only prod)
+        if: github.ref == 'refs/heads/main'
         run: |
           cd ./automation/docker
           kubectl apply -f ./k8s-manifest.yaml
