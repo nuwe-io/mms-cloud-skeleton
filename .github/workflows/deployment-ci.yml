@@ -13,6 +13,7 @@ env:
   IMAGE: mms-cloud-skeleton-image
   IMAGE_LATEST_TAG: $GAR_LOCATION-docker.pkg.dev/$PROJECT_ID/$DEPLOYMENT_NAME/$IMAGE:latest
   IMAGE_SHA_TAG: '$GAR_LOCATION-docker.pkg.dev/$PROJECT_ID/$DEPLOYMENT_NAME/$IMAGE:$GITHUB_SHA'
+  TFSTATES_BUCKET_NAME: 'mms-cloud-skeleton-$PROJECT_ID-tfstate'
 
 jobs:
   terraform:
@@ -51,6 +52,11 @@ jobs:
     # Enable container services for used credentials
     - name: 'Enable container services'
       run: 'gcloud services enable container.googleapis.com' 
+    
+    # Create storage bucket on GCP for storing TFStates
+    - name: 'Deploy tfstates bucket'
+      run: 'gcloud storage buckets create gs://$TFSTATES_BUCKET_NAME' 
+
 
     # Initialize a new or existing Terraform working directory by creating initial files, loading any remote state, downloading modules, etc.
     - name: Terraform Init
