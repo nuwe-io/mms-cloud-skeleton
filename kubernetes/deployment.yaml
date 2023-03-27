@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mms-cloud-skeleton
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: mms-cloud-skeleton
+  template:
+    metadata:
+      labels:
+        app: mms-cloud-skeleton
+    spec:
+      containers:
+      - image: "${docker_image}"
+        imagePullPolicy: Always
+        name: mms-cloud-skeleton
+        ports:
+        - containerPort: 3000
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mms-cloud-skeleton-srv
+spec:
+  type: LoadBalancer
+  selector:
+    app: mms-cloud-skeleton
+  ports:
+  - port: 80
+    targetPort: 3000
+---
