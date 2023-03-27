@@ -10,6 +10,8 @@ env:
   GKE_CLUSTER: mms-cluster-gke    # TODO: update to cluster name
   DEPLOYMENT_NAME: mms-cloud-skeleton # TODO: update to deployment name
   IMAGE: mms-cloud-skeleton-image
+  IMAGE_LATEST_TAG: $GAR_LOCATION-docker.pkg.dev/$PROJECT_ID/$DEPLOYMENT_NAME/$IMAGE:latest
+  IMAGE_SHA_TAG: '$GAR_LOCATION-docker.pkg.dev/$PROJECT_ID/$DEPLOYMENT_NAME/$IMAGE:$GITHUB_SHA'
 
 jobs:
   terraform:
@@ -31,6 +33,19 @@ jobs:
     - name: Setup Terraform
       uses: hashicorp/setup-terraform@v1
 
+    # Authenticate with GCP for enabling services
+    - id: 'auth'
+      uses: 'google-github-actions/auth@v0'
+      with:
+        credentials_json: '${{ secrets.GOOGLE_CREDENTIALS }}'
+
+    # Enable computer services for used credentials
+    - name: 'Enable computer services'
+      run: 'gcloud services enable compute.googleapis.com' 
+
+    # Enable container services for used credentials
+    - name: 'Enable container services'
+      run: 'gcloud services enable container.googleapis.com' 
 
     # Initialize a new or existing Terraform working directory by creating initial files, loading any remote state, downloading modules, etc.
     - name: Terraform Init
@@ -69,32 +84,44 @@ jobs:
       contents: 'read'
       id-token: 'write'
 
+    # Use the Bash shell regardless whether the GitHub Actions runner is ubuntu-latest, macos-latest, or windows-latest
+    defaults:
+      run:
+        shell: bash
+
     steps:
+    # Checkout the repository to the GitHub Actions runner
     - name: Checkout
       uses: actions/checkout@v3
 
-    # Alternative option - authentication via credentials json
+    # Authenticate with GCP
     - id: 'auth'
       uses: 'google-github-actions/auth@v0'
       with:
         credentials_json: '${{ secrets.GOOGLE_CREDENTIALS }}'
 
+    # Install latest version of GCP Cloud SDK
     - name: 'Set up Cloud SDK'
       uses: 'google-github-actions/setup-gcloud@v1'
 
+    # Obtain GKE credentials with gcloud
     - name: 'Get GKE credentials'
       run: 'gcloud container clusters get-credentials $GKE_CLUSTER --region $GAR_LOCATION --project $PROJECT_ID'
       
+    # Create artifact repository. If it fails, maybe it exists so it can continue.
     - name: 'Create artifact repository'
       continue-on-error: true
       run: 'gcloud artifacts repositories create $DEPLOYMENT_NAME --repository-format=docker --location=$GAR_LOCATION --description="mms-cloud-skeleton"'
 
+    # Push artifact with GITHUB_SHA tag for storing it if changes
     - name: 'Push artifact build with GITHUB_SHA tag'
-      run: 'gcloud builds submit --region=$GAR_LOCATION --tag $GAR_LOCATION-docker.pkg.dev/$PROJECT_ID/$DEPLOYMENT_NAME/$IMAGE:$GITHUB_SHA'
+      run: 'gcloud builds submit --region=$GAR_LOCATION --tag $IMAGE_SHA_TAG'
       
+    # Push artifact with lates tag for being used
     - name: 'Push artifact build with latest tag'
-      run: 'gcloud builds submit --region=$GAR_LOCATION --tag $GAR_LOCATION-docker.pkg.dev/$PROJECT_ID/$DEPLOYMENT_NAME/$IMAGE:latest'
+      run: 'gcloud builds submit --region=$GAR_LOCATION --tag $IMAGE_LATEST_TAG'
       
+    # Deploy the kubernetes deployment to GKE
     - name: 'Deploy deployment.yaml to GKE'
       working-directory: ./kubernetes
-      run: 'cat deployment.yaml | sed "s|{{DOCKER_IMAGE}}|$docker_image|g" | kubectl apply -f -'
+      run: 'cat deployment.yaml | sed "s|{{DOCKER_IMAGE}}|$IMAGE_LATEST_TAG|g" | kubectl apply -f -'
