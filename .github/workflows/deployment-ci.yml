@@ -1,0 +1,100 @@
+name: Deploy resources with terraform, build docker image and Deploy to GKE
+
+on:
+  push:
+    branches: [ "main" ]
+
+env:
+  PROJECT_ID: ${{ secrets.GKE_PROJECT }}
+  GAR_LOCATION: europe-west1 # TODO: update region of the Artifact Registry
+  GKE_CLUSTER: mms-cluster-gke    # TODO: update to cluster name
+  DEPLOYMENT_NAME: mms-cloud-skeleton # TODO: update to deployment name
+  IMAGE: mms-cloud-skeleton-image
+
+jobs:
+  terraform:
+    name: 'Terraform'
+    runs-on: ubuntu-latest
+    environment: production
+
+    # Use the Bash shell regardless whether the GitHub Actions runner is ubuntu-latest, macos-latest, or windows-latest
+    defaults:
+      run:
+        shell: bash
+
+    steps:
+    # Checkout the repository to the GitHub Actions runner
+    - name: Checkout
+      uses: actions/checkout@v2
+
+    # Install the latest version of Terraform CLI and configure the Terraform CLI configuration file with a Terraform Cloud user API token
+    - name: Setup Terraform
+      uses: hashicorp/setup-terraform@v1
+
+
+    # Initialize a new or existing Terraform working directory by creating initial files, loading any remote state, downloading modules, etc.
+    - name: Terraform Init
+      working-directory: ./terraform
+      run: terraform init
+      env:
+        GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS }}
+
+    # Checks that all Terraform configuration files adhere to a canonical format
+    - name: Terraform Format
+      working-directory: ./terraform
+      run: terraform fmt -check
+
+    # Generates an execution plan for Terraform
+    - name: Terraform Plan
+      working-directory: ./terraform
+      run: terraform plan
+      env:
+        GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS }}
+
+      # On push to main, build or change infrastructure according to Terraform configuration files
+    - name: Terraform Apply
+      working-directory: ./terraform
+      if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+      run: terraform apply -auto-approve
+      env:
+        GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS }}
+
+  setup-build-publish-deploy:
+    needs: terraform
+    name: Setup, Build, Publish, and Deploy
+    runs-on: ubuntu-latest
+    environment: production
+
+    permissions:
+      contents: 'read'
+      id-token: 'write'
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+
+    # Alternative option - authentication via credentials json
+    - id: 'auth'
+      uses: 'google-github-actions/auth@v0'
+      with:
+        credentials_json: '${{ secrets.GOOGLE_CREDENTIALS }}'
+
+    - name: 'Set up Cloud SDK'
+      uses: 'google-github-actions/setup-gcloud@v1'
+
+    - name: 'Get GKE credentials'
+      run: 'gcloud container clusters get-credentials $GKE_CLUSTER --region $GAR_LOCATION --project $PROJECT_ID'
+      
+    - name: 'Create artifact repository'
+      continue-on-error: true
+      run: 'gcloud artifacts repositories create $DEPLOYMENT_NAME --repository-format=docker --location=$GAR_LOCATION --description="mms-cloud-skeleton"'
+
+    - name: 'Push artifact build with GITHUB_SHA tag'
+      run: 'gcloud builds submit --region=$GAR_LOCATION --tag $GAR_LOCATION-docker.pkg.dev/$PROJECT_ID/$DEPLOYMENT_NAME/$IMAGE:$GITHUB_SHA'
+      
+    - name: 'Push artifact build with latest tag'
+      run: 'gcloud builds submit --region=$GAR_LOCATION --tag $GAR_LOCATION-docker.pkg.dev/$PROJECT_ID/$DEPLOYMENT_NAME/$IMAGE:latest'
+      
+    - name: 'Deploy deployment.yaml to GKE'
+      working-directory: ./kubernetes
+      run: 'cat deployment.yaml | sed "s|{{DOCKER_IMAGE}}|$docker_image|g" | kubectl apply -f -'
