@@ -33,13 +33,13 @@ jobs:
       uses: hashicorp/setup-terraform@v1
 
     # Authenticate with GCP for enabling services and terraform    
-    - name: Setup GCP Service Account
-      uses: google-github-actions/setup-gcloud@v1
+    - id: 'auth'
+      uses: 'google-github-actions/auth@v1'
       with:
-        version: 'latest'
-        service_account_email: ${{ secrets.SERVICE_ACCOUNT_EMAIL }}
-        service_account_key: ${{ secrets.GOOGLE_CREDENTIALS }}
-        export_default_credentials: true
+        credentials_json: '${{ secrets.GCP_CREDENTIALS }}'
+
+    - name: 'Set up Cloud SDK'
+      uses: 'google-github-actions/setup-gcloud@v1'
 
     # Enable serviceusage services for used credentials
     - name: 'Enable serviceusage services'
