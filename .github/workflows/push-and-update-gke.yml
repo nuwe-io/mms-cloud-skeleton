@@ -38,6 +38,7 @@ jobs:
       run: 'gcloud container clusters get-credentials $GKE_CLUSTER --region $GAR_LOCATION --project $PROJECT_ID'
       
     - name: 'Create artifact repository'
+      continue-on-error: true
       run: 'gcloud artifacts repositories create $DEPLOYMENT_NAME --repository-format=docker --location=$GAR_LOCATION --description="mms-cloud-skeleton"'
 
     - name: 'Push artifact build with GITHUB_SHA tag'
