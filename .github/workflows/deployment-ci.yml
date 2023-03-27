@@ -79,7 +79,7 @@ jobs:
     - name: Terraform Apply
       working-directory: ./terraform
       if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-      run: terraform apply -auto-approve
+      run: terraform apply -auto-approve -var="project_id=$PROJECT_ID" -var="service_account_email=$SERVICE_ACCOUNT_EMAIL"
       env:
         GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS }}
 
