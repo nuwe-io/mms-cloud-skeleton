@@ -13,7 +13,7 @@ spec:
         app: mms-cloud-skeleton
     spec:
       containers:
-      - image: "${docker_image}"
+      - image: "{{DOCKER_IMAGE}}"
         imagePullPolicy: Always
         name: mms-cloud-skeleton
         ports:
