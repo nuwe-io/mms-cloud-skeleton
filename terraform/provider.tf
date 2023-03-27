@@ -22,9 +22,9 @@ terraform {
       source  = "hashicorp/google"
       version = "~> 4.0"
     }
-    kubectl = {
-      source  = "gavinbunney/kubectl"
-      version = ">= 1.7.0"
-    }
+    # kubectl = {
+    #   source  = "gavinbunney/kubectl"
+    #   version = ">= 1.7.0"
+    # }
   }
 }
