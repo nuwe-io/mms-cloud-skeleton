@@ -50,6 +50,10 @@ jobs:
     - name: 'Enable container services'
       run: 'gcloud services enable container.googleapis.com' 
     
+    # Enable contaicloudresourcemanagerner services for used credentials
+    - name: 'Enable cloudresourcemanager services'
+      run: 'gcloud services enable cloudresourcemanager.googleapis.com' 
+    
     # Create storage bucket on GCP for storing TFStates
     - name: 'Deploy tfstates bucket'
       continue-on-error: true
