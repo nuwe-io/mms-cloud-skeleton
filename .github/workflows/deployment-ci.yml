@@ -39,6 +39,10 @@ jobs:
       with:
         credentials_json: '${{ secrets.GOOGLE_CREDENTIALS }}'
 
+    # Enable serviceusage services for used credentials
+    - name: 'Enable serviceusage services'
+      run: 'gcloud services enable serviceusage.googleapis.com' 
+
     # Enable computer services for used credentials
     - name: 'Enable computer services'
       run: 'gcloud services enable compute.googleapis.com' 
