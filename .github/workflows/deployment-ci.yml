@@ -11,9 +11,6 @@ env:
   GKE_CLUSTER: mms-cluster-gke    # TODO: update to cluster name
   DEPLOYMENT_NAME: mms-cloud-skeleton # TODO: update to deployment name
   IMAGE: mms-cloud-skeleton-image
-  IMAGE_LATEST_TAG: $GAR_LOCATION-docker.pkg.dev/$PROJECT_ID/$DEPLOYMENT_NAME/$IMAGE:latest
-  IMAGE_SHA_TAG: $GAR_LOCATION-docker.pkg.dev/$PROJECT_ID/$DEPLOYMENT_NAME/$IMAGE:$GITHUB_SHA
-  TFSTATES_BUCKET_NAME: mms-cloud-skeleton-$PROJECT_ID-tfstate
 
 jobs:
   terraform:
@@ -55,7 +52,7 @@ jobs:
     
     # Create storage bucket on GCP for storing TFStates
     - name: 'Deploy tfstates bucket'
-      run: 'gcloud storage buckets create gs://$TFSTATES_BUCKET_NAME' 
+      run: 'gcloud storage buckets create gs://mms-cloud-skeleton-$PROJECT_ID-tfstate' 
 
 
     # Initialize a new or existing Terraform working directory by creating initial files, loading any remote state, downloading modules, etc.
@@ -126,11 +123,11 @@ jobs:
 
     # Push artifact with GITHUB_SHA tag for storing it if changes
     - name: 'Push artifact build with GITHUB_SHA tag'
-      run: 'gcloud builds submit --region=$GAR_LOCATION --tag $IMAGE_SHA_TAG'
+      run: 'gcloud builds submit --region=$GAR_LOCATION --tag $GAR_LOCATION-docker.pkg.dev/$PROJECT_ID/$DEPLOYMENT_NAME/$IMAGE:$GITHUB_SHA'
       
     # Push artifact with lates tag for being used
     - name: 'Push artifact build with latest tag'
-      run: 'gcloud builds submit --region=$GAR_LOCATION --tag $IMAGE_LATEST_TAG'
+      run: 'gcloud builds submit --region=$GAR_LOCATION --tag $GAR_LOCATION-docker.pkg.dev/$PROJECT_ID/$DEPLOYMENT_NAME/$IMAGE:latest'
       
     # Deploy the kubernetes deployment to GKE
     - name: 'Deploy deployment.yaml to GKE'
