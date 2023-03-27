@@ -1,5 +1,5 @@
 services:
   mms-cloud-skeleton:
-    image: "gcr.io/aovofaxlg4dh8oi8np5wpwkmted1bl/mms-cloud-skeleton:8d21d849-3c3d-41e8-9d0e-4893e3a4a65b"
+    build: .
     ports:
       - "3000:3000"
