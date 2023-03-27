@@ -15,7 +15,6 @@ provider "kubectl" {
 # https://www.terraform.io/language/settings/backends/gcs
 terraform {
   backend "gcs" {
-    bucket = "{{BUCKET_NAME}}"
     prefix = "terraform/state"
   }
   required_providers {
