@@ -48,4 +48,4 @@ jobs:
       run: 'gcloud builds submit --region=$GAR_LOCATION --tag $GAR_LOCATION-docker.pkg.dev/$PROJECT_ID/$DEPLOYMENT_NAME/$IMAGE:latest'
       
     - name: 'Deploy deployment.yaml to GKE'
-      run: 'cat ../../kubernetes/deployment.yaml | sed "s|{{DOCKER_IMAGE}}|$docker_image|g" | kubectl apply -f'
+      run: 'cat ../../kubernetes/deployment.yaml | sed "s|{{DOCKER_IMAGE}}|$docker_image|g" | kubectl apply -f -'
