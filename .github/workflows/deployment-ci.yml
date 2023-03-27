@@ -52,6 +52,7 @@ jobs:
     
     # Create storage bucket on GCP for storing TFStates
     - name: 'Deploy tfstates bucket'
+      continue-on-error: true
       run: 'gcloud storage buckets create gs://mms-cloud-skeleton-$PROJECT_ID-tfstate' 
 
 
