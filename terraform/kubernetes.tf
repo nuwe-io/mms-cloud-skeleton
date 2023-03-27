@@ -67,17 +67,17 @@ resource "google_container_node_pool" "general" {
   }
 }
 
-data "kubectl_path_documents" "docs" {
-  pattern = "../kubernetes/*.yaml"
-  vars = tomap({
-    docker_image = "${var.region}-docker.pkg.dev/${var.project_id}/mms-cloud-skeleton/mms-cloud-skeleton-image:latest"
-  })
-}
+# data "kubectl_path_documents" "docs" {
+#   pattern = "../kubernetes/*.yaml"
+#   vars = tomap({
+#     docker_image = "${var.region}-docker.pkg.dev/${var.project_id}/mms-cloud-skeleton/mms-cloud-skeleton-image:latest"
+#   })
+# }
 
-resource "kubectl_manifest" "test" {
-  count     = length(data.kubectl_path_documents.docs.documents)
-  yaml_body = element(data.kubectl_path_documents.docs.documents, count.index)
-  depends_on = [
-    google_container_node_pool.general
-  ]
-}
+# resource "kubectl_manifest" "test" {
+#   count     = length(data.kubectl_path_documents.docs.documents)
+#   yaml_body = element(data.kubectl_path_documents.docs.documents, count.index)
+#   depends_on = [
+#     google_container_node_pool.general
+#   ]
+# }
