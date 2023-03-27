@@ -12,8 +12,8 @@ env:
   DEPLOYMENT_NAME: mms-cloud-skeleton # TODO: update to deployment name
   IMAGE: mms-cloud-skeleton-image
   IMAGE_LATEST_TAG: $GAR_LOCATION-docker.pkg.dev/$PROJECT_ID/$DEPLOYMENT_NAME/$IMAGE:latest
-  IMAGE_SHA_TAG: '$GAR_LOCATION-docker.pkg.dev/$PROJECT_ID/$DEPLOYMENT_NAME/$IMAGE:$GITHUB_SHA'
-  TFSTATES_BUCKET_NAME: 'mms-cloud-skeleton-$PROJECT_ID-tfstate'
+  IMAGE_SHA_TAG: $GAR_LOCATION-docker.pkg.dev/$PROJECT_ID/$DEPLOYMENT_NAME/$IMAGE:$GITHUB_SHA
+  TFSTATES_BUCKET_NAME: mms-cloud-skeleton-$PROJECT_ID-tfstate
 
 jobs:
   terraform:
