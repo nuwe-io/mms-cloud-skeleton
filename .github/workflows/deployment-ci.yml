@@ -39,7 +39,7 @@ jobs:
         credentials_json: '${{ secrets.GOOGLE_CREDENTIALS }}'
     
     - name: Setup GCP Service Account
-      uses: google-github-actions/setup-gcloud@master
+      uses: google-github-actions/setup-gcloud@v1
       with:
         version: 'latest'
         service_account_email: ${{ secrets.SERVICE_ACCOUNT_EMAIL }}
