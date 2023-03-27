@@ -15,7 +15,7 @@ provider "kubectl" {
 # https://www.terraform.io/language/settings/backends/gcs
 terraform {
   backend "gcs" {
-    bucket = "mms-cloud-skeleton-aovofaxlg4dh8oi8np5wpwkmted1bl-tfstate"
+    bucket = "{{BUCKET_NAME}}"
     prefix = "terraform/state"
   }
   required_providers {
