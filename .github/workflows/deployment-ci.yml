@@ -129,8 +129,11 @@ jobs:
       run: 'gcloud services enable artifactregistry.googleapis.com' 
 
     # Obtain GKE credentials with gcloud
-    - name: 'Get GKE credentials'
-      run: 'gcloud container clusters get-credentials $GKE_CLUSTER --region $GAR_LOCATION --project $PROJECT_ID'
+    - id: 'get-credentials'
+      uses: 'google-github-actions/get-gke-credentials@v1'
+      with:
+        cluster_name: '$GKE_CLUSTER'
+        location: '$GAR_LOCATION'
       
     # Create artifact repository. If it fails, maybe it exists so it can continue.
     - name: 'Create artifact repository'
@@ -139,7 +142,7 @@ jobs:
 
     # Push artifact with GITHUB_SHA tag for storing it if changes
     - name: 'Build and push artifacts build with GITHUB_SHA and latest tag'
-      run: 'gcloud builds submit . --config=cloudbuild.yaml --substitutions=_FULL_IMAGE_NAME="${GAR_LOCATION}-docker.pkg.dev/${PROJECT_ID}/${DEPLOYMENT_NAME}/${IMAGE}",_GITHUB_SHA="${GITHUB_SHA}"'
+      run: 'gcloud builds submit . --config=cloudbuild.yaml --substitutions=_FULL_IMAGE_NAME="${GAR_LOCATION}-docker.pkg.dev/${PROJECT_ID}/${DEPLOYMENT_NAME}/${IMAGE}",_GITHUB_SHA="${GITHUB_SHA}" --quiet'
             
     # Deploy the kubernetes deployment to GKE
     - name: 'Deploy deployment.yaml to GKE'
