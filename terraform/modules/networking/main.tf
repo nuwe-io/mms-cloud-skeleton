@@ -11,6 +11,12 @@ resource "google_compute_firewall" "allow-http-port" {
   source_ranges = ["0.0.0.0/0"]
 }
 
+resource "google_compute_address" "address" {
+  count  = 2
+  name   = "${var.name}nat-manual-ip-${count.index}"
+  region = var.region
+}
+
 # https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_router_nat
 resource "google_compute_router_nat" "nat" {
   name   = "${var.name}-router-nat"
@@ -19,6 +25,7 @@ resource "google_compute_router_nat" "nat" {
 
   source_subnetwork_ip_ranges_to_nat = "LIST_OF_SUBNETWORKS"
   nat_ip_allocate_option             = "MANUAL_ONLY"
+  nat_ips                            = google_compute_address.address.*.self_link
 
   subnetwork {
     name                    = google_compute_subnetwork.private.id
