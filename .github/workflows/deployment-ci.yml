@@ -138,13 +138,9 @@ jobs:
       run: 'gcloud artifacts repositories create $DEPLOYMENT_NAME --repository-format=docker --location=$GAR_LOCATION --description="mms-cloud-skeleton"'
 
     # Push artifact with GITHUB_SHA tag for storing it if changes
-    - name: 'Push artifact build with GITHUB_SHA tag'
-      run: 'gcloud builds submit --region=$GAR_LOCATION --tag $GAR_LOCATION-docker.pkg.dev/$PROJECT_ID/$DEPLOYMENT_NAME/$IMAGE:$GITHUB_SHA'
-      
-    # Push artifact with lates tag for being used
-    - name: 'Push artifact build with latest tag'
-      run: 'gcloud builds submit --region=$GAR_LOCATION --tag $GAR_LOCATION-docker.pkg.dev/$PROJECT_ID/$DEPLOYMENT_NAME/$IMAGE:latest'
-      
+    - name: 'Build and push artifacts build with GITHUB_SHA and latest tag'
+      run: 'gcloud builds submit --config=cloudbuild.yaml'
+            
     # Deploy the kubernetes deployment to GKE
     - name: 'Deploy deployment.yaml to GKE'
       working-directory: ./kubernetes
