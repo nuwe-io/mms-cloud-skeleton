@@ -123,6 +123,10 @@ jobs:
     # Enable cloudbuild services for pushing the docker image
     - name: 'Enable cloudbuild services'
       run: 'gcloud services enable cloudbuild.googleapis.com' 
+    
+    # Enable artifactregistry services for pushing the docker image
+    - name: 'Enable artifactregistry services'
+      run: 'gcloud services enable artifactregistry.googleapis.com' 
 
     # Obtain GKE credentials with gcloud
     - name: 'Get GKE credentials'
