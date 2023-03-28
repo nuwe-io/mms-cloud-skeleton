@@ -65,7 +65,7 @@ steps:
 
 # [START Deploy to GKE]
 - id: 'deploy-to-gke'
-- name: "gcr.io/cloud-builders/gke-deploy"
+- name: 'gcr.io/cloud-builders/gke-deploy'
   args:
   - run
   - --filename=kuberetes/deployment.yaml
