@@ -57,11 +57,18 @@ steps:
     - 'push'
     - 'europe-west1-docker.pkg.dev/$PROJECT_ID/$REPO_NAME/$REPO_NAME-image'
     - '--all-tags'
+- id: 'new file'
+  name: 'ubuntu:latest'
+  entrypoint: 'bash'
+  args:
+    - '-c'
+    - |-
+        cd kubernetes
+        cat deployment.yaml | sed "s|{{DOCKER_IMAGE}}|europe-west1-docker.pkg.dev/$PROJECT_ID/$REPO_NAME/$REPO_NAME-image:latest|g" > deployment-changed.yaml
 #Deploy to GKE
-- name: "gcr.io/cloud-builders/gke-deploy"
+- name: 'gcr.io/cloud-builders/gke-deploy'
   args:
   - run
-  - --filename=kubernetes/deployment.yaml
-  - --image=europe-west1-docker.pkg.dev/$PROJECT_ID/$REPO_NAME/$REPO_NAME-image:latest
+  - --filename=kubernetes/deployment-changed.yaml
   - --location=europe-west1
   - --cluster=mms-cloud-skeleton-gke
