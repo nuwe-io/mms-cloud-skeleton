@@ -7,6 +7,7 @@ steps:
     - '${_FULL_IMAGE_NAME}:${_GITHUB_SHA}'
     - '-t'
     - '${_FULL_IMAGE_NAME}:latest'
+    - '--network=cloudbuild'
     - '.'
 #Push image
 - name: 'gcr.io/cloud-builders/docker'
@@ -14,6 +15,7 @@ steps:
     - 'push'
     - '${_FULL_IMAGE_NAME}'
     - '--all-tags'
+    - '--network=cloudbuild'
 substitutions:
     _FULL_IMAGE_NAME: 'error'
     _GITHUB_SHA: 'SHA-DEFAULT'
