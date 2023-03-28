@@ -78,7 +78,7 @@ jobs:
     # Generates an execution plan for Terraform
     - name: Terraform Plan
       working-directory: ./terraform
-      run: terraform plan -var="project_id=${{ secrets.GKE_PROJECT }}" -var="service_account_email=${{ secrets.SERVICE_ACCOUNT_EMAIL }}"
+      run: terraform plan -var="project_id=rich-solstice-381921" -var="service_account_email=devops@rich-solstice-381921.iam.gserviceaccount.com"
       env:
         GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS }}
 
