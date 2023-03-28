@@ -15,4 +15,5 @@ module "kubernetes" {
   region = var.region
   subnet_self_link = module.networking.subnet_self_link
   vpc_self_link = module.networking.vpc_self_link
+  project_number = data.google_project.project.number
 }
