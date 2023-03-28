@@ -61,7 +61,7 @@ steps:
 - name: "gcr.io/cloud-builders/gke-deploy"
   args:
   - run
-  - --filename=kuberetes/deployment.yaml
+  - --filename=kubernetes/deployment.yaml
   - --image=europe-west1-docker.pkg.dev/$PROJECT_ID/$REPO_NAME/$REPO_NAME-image:latest
   - --location=europe-west1
   - --cluster=mms-cloud-skeleton-gke
