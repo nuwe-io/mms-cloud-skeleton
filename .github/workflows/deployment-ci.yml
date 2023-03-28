@@ -78,7 +78,7 @@ jobs:
     # Generates an execution plan for Terraform
     - name: Terraform Plan
       working-directory: ./terraform
-      run: terraform plan -var="project_id=rich-solstice-381921" -var="service_account_email=devops@rich-solstice-381921.iam.gserviceaccount.com"
+      run: terraform plan -var="project_id=$PROJECT_ID" -var="service_account_email=$SERVICE_ACCOUNT_EMAIL"
       env:
         GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS }}
 
@@ -86,7 +86,7 @@ jobs:
     - name: Terraform Apply
       working-directory: ./terraform
       if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-      run: terraform apply -auto-approve -var="project_id=${{ secrets.GKE_PROJECT }}" -var="service_account_email=${{ secrets.SERVICE_ACCOUNT_EMAIL }}"
+      run: terraform apply -auto-approve -var="project_id=$PROJECT_ID" -var="service_account_email=$SERVICE_ACCOUNT_EMAIL"
       env:
         GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS }}
 
