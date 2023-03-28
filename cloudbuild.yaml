@@ -47,21 +47,21 @@ steps:
   args:
     - 'build'
     - '-t'
-    - '$LOCATION-docker.pkg.dev/$PROJECT_ID/$REPO_NAME/$REPO_NAME-image:${BUILD_ID}'
+    - 'europe-west1-docker.pkg.dev/$PROJECT_ID/$REPO_NAME/$REPO_NAME-image:${BUILD_ID}'
     - '-t'
-    - '$LOCATION-docker.pkg.dev/$PROJECT_ID/$REPO_NAME/$REPO_NAME-image:latest'
+    - 'europe-west1-docker.pkg.dev/$PROJECT_ID/$REPO_NAME/$REPO_NAME-image:latest'
     - '.'
 #Push image
 - name: 'gcr.io/cloud-builders/docker'
   args:
     - 'push'
-    - '$LOCATION-docker.pkg.dev/$PROJECT_ID/$REPO_NAME/$REPO_NAME-image'
+    - 'europe-west1-docker.pkg.dev/$PROJECT_ID/$REPO_NAME/$REPO_NAME-image'
     - '--all-tags'
 #Deploy to GKE
 - name: "gcr.io/cloud-builders/gke-deploy"
   args:
   - run
   - --filename=kuberetes/deployment.yaml
-  - --image=$LOCATION-docker.pkg.dev/$PROJECT_ID/$REPO_NAME/$REPO_NAME-image:latest
-  - --location=$LOCATION
+  - --image=europe-west1-docker.pkg.dev/$PROJECT_ID/$REPO_NAME/$REPO_NAME-image:latest
+  - --location=europe-west1
   - --cluster=mms-cloud-skeleton-gke
