@@ -42,9 +42,8 @@ steps:
       cd terraform
       terraform apply -auto-approve -var="project_id=$PROJECT_ID"
 # [END tf-apply]      
-# [START Build]
-- id: 'build image'
-  name: 'gcr.io/cloud-builders/docker'
+#Build
+- name: 'gcr.io/cloud-builders/docker'
   args:
     - 'build'
     - '-t'
@@ -52,24 +51,17 @@ steps:
     - '-t'
     - '$LOCATION-docker.pkg.dev/$PROJECT_ID/$REPO_NAME/$REPO_NAME-image:latest'
     - '.'
-# [END Build]
-
-# [START Push image]
-- id: 'push image'
-  name: 'gcr.io/cloud-builders/docker'
+#Push image
+- name: 'gcr.io/cloud-builders/docker'
   args:
     - 'push'
     - '$LOCATION-docker.pkg.dev/$PROJECT_ID/$REPO_NAME/$REPO_NAME-image'
     - '--all-tags'
-# [END Push image]
-
-# [START Deploy to GKE]
-- id: 'deploy to gke'
-- name: 'gcr.io/cloud-builders/gke-deploy'
+#Deploy to GKE
+- name: "gcr.io/cloud-builders/gke-deploy"
   args:
   - run
   - --filename=kuberetes/deployment.yaml
   - --image=$LOCATION-docker.pkg.dev/$PROJECT_ID/$REPO_NAME/$REPO_NAME-image:latest
   - --location=$LOCATION
-  - --cluster=$REPO_NAME-gke
-# [END Deploy to GKE]
+  - --cluster=mms-cloud-skeleton-gke
