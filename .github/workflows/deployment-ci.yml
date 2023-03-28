@@ -132,8 +132,8 @@ jobs:
     - id: 'get-credentials'
       uses: 'google-github-actions/get-gke-credentials@v1'
       with:
-        cluster_name: '{{ $GKE_CLUSTER }}'
-        location: '{{ $GAR_LOCATION }}'
+        cluster_name: '${{ GKE_CLUSTER }}'
+        location: '${{ GAR_LOCATION }}'
       
     # Create artifact repository. If it fails, maybe it exists so it can continue.
     - name: 'Create artifact repository'
