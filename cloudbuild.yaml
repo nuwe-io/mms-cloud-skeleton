@@ -1,0 +1,16 @@
+steps:
+#Build
+- name: 'gcr.io/cloud-builders/docker'
+  args:
+    - 'build'
+    - '-t'
+    - '$GAR_LOCATION-docker.pkg.dev/$PROJECT_ID/$DEPLOYMENT_NAME/$IMAGE:$GITHUB_SHA'
+    - '-t'
+    - '$GAR_LOCATION-docker.pkg.dev/$PROJECT_ID/$DEPLOYMENT_NAME/$IMAGE:latest'
+    - '.'
+#Push image
+- name: 'gcr.io/cloud-builders/docker'
+  args:
+    - 'push'
+    - '$GAR_LOCATION-docker.pkg.dev/$PROJECT_ID/$DEPLOYMENT_NAME/$IMAGE'
+    - '--all-tags'
