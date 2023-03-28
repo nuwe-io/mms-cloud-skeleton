@@ -1,3 +1,6 @@
+data "google_project" "project" {
+}
+
 # https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/container_cluster
 resource "google_container_cluster" "primary" {
   name                     = var.cluster_name
@@ -26,7 +29,7 @@ resource "google_container_cluster" "primary" {
   }
 
   workload_identity_config {
-    workload_pool = "${var.project_id}.svc.id.goog"
+    workload_pool = "${data.google_project.project.number}.svc.id.goog"
   }
 
   ip_allocation_policy {
@@ -45,7 +48,7 @@ resource "google_container_cluster" "primary" {
 resource "google_container_node_pool" "general" {
   name       = "general"
   cluster    = google_container_cluster.primary.id
-  node_count = 1
+  node_count = 2
 
   management {
     auto_repair  = true

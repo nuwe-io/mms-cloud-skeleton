@@ -1,11 +1,11 @@
 # https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_firewall
-resource "google_compute_firewall" "allow-ssh" {
-  name    = "allow-ssh"
+resource "google_compute_firewall" "allow-http-port" {
+  name    = "allow-http-3000"
   network = google_compute_network.main.name
 
   allow {
     protocol = "tcp"
-    ports    = ["22"]
+    ports    = ["3000"]
   }
 
   source_ranges = ["0.0.0.0/0"]

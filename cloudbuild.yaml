@@ -40,7 +40,7 @@ steps:
   - '-c'
   - |- 
       cd terraform
-      terraform apply -auto-approve -var="project_id=$PROJECT_ID" -var="service_account_email=$PROJECT_ID-compute@developer.gserviceaccount.com"
+      terraform apply -auto-approve -var="project_id=$PROJECT_ID" -var="service_account_email=$PROJECT_NUMBER-compute@developer.gserviceaccount.com"
 # [END tf-apply]      
 #Build
 - name: 'gcr.io/cloud-builders/docker'
