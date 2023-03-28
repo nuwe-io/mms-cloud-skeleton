@@ -15,7 +15,6 @@ steps:
     - '${_FULL_IMAGE_NAME}'
     - '--all-tags'
 substitutions:
-    _IMAGE: 'mms-cloud-skeleton-image'
     _FULL_IMAGE_NAME: 'error'
 options:
     dynamic_substitutions: true
