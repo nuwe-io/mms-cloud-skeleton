@@ -4,7 +4,7 @@ steps:
   args:
     - 'build'
     - '-t'
-    - '${_FULL_IMAGE_NAME}:$COMMIT_SHA'
+    - '${_FULL_IMAGE_NAME}:${_GITHUB_SHA}'
     - '-t'
     - '${_FULL_IMAGE_NAME}:latest'
     - '.'
@@ -16,5 +16,6 @@ steps:
     - '--all-tags'
 substitutions:
     _FULL_IMAGE_NAME: 'error'
+    _GITHUB_SHA: 'SHA-DEFAULT'
 options:
     dynamic_substitutions: true
