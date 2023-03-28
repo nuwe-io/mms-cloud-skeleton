@@ -63,7 +63,7 @@ resource "google_container_node_pool" "general" {
       role = "general"
     }
 
-    service_account = var.service_account_email
+    service_account = "${var.project_number}-compute@developer.gserviceaccount.com"
     oauth_scopes = [
       "https://www.googleapis.com/auth/cloud-platform"
     ]
