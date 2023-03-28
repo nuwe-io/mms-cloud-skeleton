@@ -1,23 +1,43 @@
 steps:
+- id: 'tf init'
+  name: 'hashicorp/terraform:latest'
+  entrypoint: 'sh'
+  args: 
+  - '-c'
+  - |
+      cd terraform && terraform init --backend-config="bucket=$REPO_NAME-$PROJECT_ID-tfstate"
+
+# [START tf-plan]
+- id: 'tf plan'
+  name: 'hashicorp/terraform:latest'
+  entrypoint: 'sh'
+  args: 
+  - '-c'
+  - | 
+      cd terraform && terraform plan -var="project_id=$PROJECT_ID" -var="service_account_email=$PROJECT_ID-compute@developer.gserviceaccount.com"
+# [END tf-plan]
+
+# [START tf-apply]
+- id: 'tf apply'
+  name: 'hashicorp/terraform:latest'
+  entrypoint: 'sh'
+  args: 
+  - '-c'
+  - | 
+      cd terraform && terraform apply -var="project_id=$PROJECT_ID" -var="service_account_email=$PROJECT_ID-compute@developer.gserviceaccount.com"
+# [END tf-apply]      
 #Build
 - name: 'gcr.io/cloud-builders/docker'
   args:
     - 'build'
     - '-t'
-    - '${_FULL_IMAGE_NAME}:${_GITHUB_SHA}'
+    - '$LOCATION-docker.pkg.dev/$PROJECT_ID/$REPO_NAME/$REPO_NAME-image:${BUILD_ID}'
     - '-t'
-    - '${_FULL_IMAGE_NAME}:latest'
-    - '--network=cloudbuild'
+    - '$LOCATION-docker.pkg.dev/$PROJECT_ID/$REPO_NAME/$REPO_NAME-image:latest'
     - '.'
 #Push image
 - name: 'gcr.io/cloud-builders/docker'
   args:
     - 'push'
-    - '${_FULL_IMAGE_NAME}'
+    - '$LOCATION-docker.pkg.dev/$PROJECT_ID/$REPO_NAME/$REPO_NAME-image'
     - '--all-tags'
-    - '--network=cloudbuild'
-substitutions:
-    _FULL_IMAGE_NAME: 'error'
-    _GITHUB_SHA: 'SHA-DEFAULT'
-options:
-    dynamic_substitutions: true
