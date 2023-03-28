@@ -29,7 +29,7 @@ steps:
   - '-c'
   - |-
       cd terraform
-      terraform plan -var="project_id=$PROJECT_ID" -var="service_account_email=$PROJECT_NUMBER-compute@developer.gserviceaccount.com"
+      terraform plan -var="project_id=$PROJECT_ID"
 # [END tf-plan]
 
 # [START tf-apply]
@@ -40,7 +40,7 @@ steps:
   - '-c'
   - |- 
       cd terraform
-      terraform apply -auto-approve -var="project_id=$PROJECT_ID" -var="service_account_email=$PROJECT_NUMBER-compute@developer.gserviceaccount.com"
+      terraform apply -auto-approve -var="project_id=$PROJECT_ID"
 # [END tf-apply]      
 #Build
 - name: 'gcr.io/cloud-builders/docker'
