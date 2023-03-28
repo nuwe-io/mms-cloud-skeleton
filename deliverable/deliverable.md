@@ -147,3 +147,23 @@ terraform destroy
 ```
 
 ### Solution of the IAM Role assignation
+
+#### Devops Team Group
+
+The Devops Team Group must have the possibility to deploy clusters in Kubernetes. As per our example it is done by _Cloud Build_, they only have to have the permissions for manage _Cloud Build_, so their roles would be:
+
+1.  Cloud Build Editor - For being able to manage the Cloud Builds
+
+![devops_cloud_build_editor](.attachments/devops_role1.png)
+
+2.  Browser - For navigate between the resources without editing them.
+
+![devops_browser](.attachments/devops_role2.png)
+
+#### Finance team
+
+The Finance Team have to be able to manage all related to billing accounts, so their roles would be:
+
+1.  Billing Account Administrator - For being authorized to see and manage all aspects of billing account
+
+![finance_billing](.attachments/finance_role1.png)
