@@ -43,7 +43,7 @@ steps:
       terraform apply -auto-approve -var="project_id=$PROJECT_ID"
 # [END tf-apply]      
 # [START Build]
-- id: 'build-image'
+- id: 'build image'
   name: 'gcr.io/cloud-builders/docker'
   args:
     - 'build'
@@ -55,7 +55,7 @@ steps:
 # [END Build]
 
 # [START Push image]
-- id: 'push-image'
+- id: 'push image'
   name: 'gcr.io/cloud-builders/docker'
   args:
     - 'push'
@@ -64,7 +64,7 @@ steps:
 # [END Push image]
 
 # [START Deploy to GKE]
-- id: 'deploy-to-gke'
+- id: 'deploy to gke'
 - name: 'gcr.io/cloud-builders/gke-deploy'
   args:
   - run
