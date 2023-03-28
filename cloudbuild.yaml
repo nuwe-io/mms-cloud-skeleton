@@ -4,13 +4,19 @@ steps:
   args:
     - 'build'
     - '-t'
-    - '$GAR_LOCATION-docker.pkg.dev/$PROJECT_ID/$DEPLOYMENT_NAME/$IMAGE:$GITHUB_SHA'
+    - '${_FULL_IMAGE_NAME}:$GITHUB_SHA'
     - '-t'
-    - '$GAR_LOCATION-docker.pkg.dev/$PROJECT_ID/$DEPLOYMENT_NAME/$IMAGE:latest'
+    - '${_FULL_IMAGE_NAME}:latest'
     - '.'
 #Push image
 - name: 'gcr.io/cloud-builders/docker'
   args:
     - 'push'
-    - '$GAR_LOCATION-docker.pkg.dev/$PROJECT_ID/$DEPLOYMENT_NAME/$IMAGE'
+    - '${_FULL_IMAGE_NAME}'
     - '--all-tags'
+substitutions:
+    _IMAGE: 'mms-cloud-skeleton-image'
+    _FULL_IMAGE_NAME: 'error'
+    _GITHUB_SHA: 'SHA'
+options:
+    dynamic_substitutions: true
