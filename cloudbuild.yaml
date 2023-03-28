@@ -29,7 +29,7 @@ steps:
   - '-c'
   - |-
       cd terraform
-      terraform plan -var="project_id=$PROJECT_ID" -var="service_account_email=$PROJECT_ID-compute@developer.gserviceaccount.com"
+      terraform plan -var="project_id=$PROJECT_ID" -var="service_account_email=$PROJECT_NUMBER-compute@developer.gserviceaccount.com"
 # [END tf-plan]
 
 # [START tf-apply]

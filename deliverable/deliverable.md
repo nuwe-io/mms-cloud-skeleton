@@ -97,10 +97,11 @@ For manual deployment, the Terraform must be executed for the first time. This w
 ``` bash
 bucket_name="mms-cloud-skeleton-$project_id-tfstate"
 project_id=aovofaxlg4dh8oi8np5wpwkmted1bl
-$service_account_email="724226548140-compute@developer.gserviceaccount.com"
+CLOUDBUILD_SA="$(gcloud projects describe $project_id \
+    --format 'value(projectNumber)')@cloudbuild.gserviceaccount.com"
 terraform init -backend-config="bucket=$bucket_name"
-terraform plan -var="project_id=$project_id" -var="service_account_email=$service_account_email"
-terraform apply -var="project_id=$project_id" -var="service_account_email=$service_account_email"
+terraform plan -var="project_id=$project_id" -var="service_account_email=$CLOUDBUILD_SA"
+terraform apply -var="project_id=$project_id" -var="service_account_email=$CLOUDBUILD_SA"
 ```
 
 This may take up to 20 minutes. Now, you have to execute the _kubectl_ command for deploying the image and the service to _GKE_. 
