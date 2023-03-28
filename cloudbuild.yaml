@@ -3,17 +3,23 @@ steps:
   name: 'gcr.io/cloud-builders/gcloud'
   entrypoint: 'bash'
   args:
-    - -c
-    - |
-        gcloud services enable serviceusage.googleapis.com && gcloud services enable compute.googleapis.com && gcloud services enable container.googleapis.com && gcloud services enable cloudresourcemanager.googleapis.com && gcloud services enable cloudbuild.googleapis.com && gcloud services enable artifactregistry.googleapis.com'
+    - '-c'
+    - |-
+        gcloud services enable serviceusage.googleapis.com
+        gcloud services enable compute.googleapis.com
+        gcloud services enable container.googleapis.com
+        gcloud services enable cloudresourcemanager.googleapis.com
+        gcloud services enable cloudbuild.googleapis.com
+        gcloud services enable artifactregistry.googleapis.com
 
 - id: 'tf init'
   name: 'hashicorp/terraform:latest'
   entrypoint: 'sh'
   args: 
   - '-c'
-  - |
-      cd terraform && terraform init --backend-config="bucket=$REPO_NAME-$PROJECT_ID-tfstate"
+  - |-
+      cd terraform
+      terraform init --backend-config="bucket=$REPO_NAME-$PROJECT_ID-tfstate"
 
 # [START tf-plan]
 - id: 'tf plan'
@@ -21,8 +27,9 @@ steps:
   entrypoint: 'sh'
   args: 
   - '-c'
-  - | 
-      cd terraform && terraform plan -var="project_id=$PROJECT_ID" -var="service_account_email=$PROJECT_ID-compute@developer.gserviceaccount.com"
+  - |-
+      cd terraform
+      terraform plan -var="project_id=$PROJECT_ID" -var="service_account_email=$PROJECT_ID-compute@developer.gserviceaccount.com"
 # [END tf-plan]
 
 # [START tf-apply]
@@ -31,8 +38,9 @@ steps:
   entrypoint: 'sh'
   args: 
   - '-c'
-  - | 
-      cd terraform && terraform apply -var="project_id=$PROJECT_ID" -var="service_account_email=$PROJECT_ID-compute@developer.gserviceaccount.com"
+  - |- 
+      cd terraform
+      terraform apply -var="project_id=$PROJECT_ID" -var="service_account_email=$PROJECT_ID-compute@developer.gserviceaccount.com"
 # [END tf-apply]      
 #Build
 - name: 'gcr.io/cloud-builders/docker'
