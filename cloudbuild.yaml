@@ -1,0 +1,74 @@
+steps:
+- id: 'enable services'
+  name: 'gcr.io/cloud-builders/gcloud'
+  entrypoint: 'bash'
+  args:
+    - '-c'
+    - |-
+        gcloud services enable serviceusage.googleapis.com
+        gcloud services enable compute.googleapis.com
+        gcloud services enable container.googleapis.com
+        gcloud services enable cloudresourcemanager.googleapis.com
+        gcloud services enable cloudbuild.googleapis.com
+        gcloud services enable artifactregistry.googleapis.com
+
+- id: 'tf init'
+  name: 'hashicorp/terraform:latest'
+  entrypoint: 'sh'
+  args: 
+  - '-c'
+  - |-
+      cd terraform
+      terraform init --backend-config="bucket=$REPO_NAME-$PROJECT_ID-tfstate"
+
+# [START tf-plan]
+- id: 'tf plan'
+  name: 'hashicorp/terraform:latest'
+  entrypoint: 'sh'
+  args: 
+  - '-c'
+  - |-
+      cd terraform
+      terraform plan -var="project_id=$PROJECT_ID"
+# [END tf-plan]
+
+# [START tf-apply]
+- id: 'tf apply'
+  name: 'hashicorp/terraform:latest'
+  entrypoint: 'sh'
+  args: 
+  - '-c'
+  - |- 
+      cd terraform
+      terraform apply -auto-approve -var="project_id=$PROJECT_ID"
+# [END tf-apply]      
+#Build
+- name: 'gcr.io/cloud-builders/docker'
+  args:
+    - 'build'
+    - '-t'
+    - 'europe-west1-docker.pkg.dev/$PROJECT_ID/$REPO_NAME/$REPO_NAME-image:${BUILD_ID}'
+    - '-t'
+    - 'europe-west1-docker.pkg.dev/$PROJECT_ID/$REPO_NAME/$REPO_NAME-image:latest'
+    - '.'
+#Push image
+- name: 'gcr.io/cloud-builders/docker'
+  args:
+    - 'push'
+    - 'europe-west1-docker.pkg.dev/$PROJECT_ID/$REPO_NAME/$REPO_NAME-image'
+    - '--all-tags'
+- id: 'new file'
+  name: 'ubuntu:latest'
+  entrypoint: 'bash'
+  args:
+    - '-c'
+    - |-
+        cd kubernetes
+        cat deployment.yaml | sed "s|{{DOCKER_IMAGE}}|europe-west1-docker.pkg.dev/$PROJECT_ID/$REPO_NAME/$REPO_NAME-image:latest|g" > deployment-changed.yaml
+#Deploy to GKE
+- name: 'gcr.io/cloud-builders/gke-deploy'
+  args:
+  - run
+  - --filename=kubernetes/deployment-changed.yaml
+  - --location=europe-west1
+  - --cluster=mms-cloud-skeleton-gke

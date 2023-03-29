@@ -12,3 +12,6 @@ yarn.lock
 
 # NPM
 package-lock.json
+
+# Terraform
+/terraform

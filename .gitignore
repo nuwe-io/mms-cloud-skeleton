@@ -26,3 +26,9 @@ coverage
 *.njsproj
 *.sln
 *.sw?
+
+# Terraform
+terraform/.terraform
+*.tfstate
+*.tfstate.backup
+terraform-back
